@@ -80,16 +80,3 @@ Ensure MySQL is running before starting the app
 👤 Author
 Sumeet — Java Backend Developer in progress 🚀
 Grinding Spring, DSA, and building real-world projects.
-
-
-
-
-
-
-
-
-
-
-
-
-
