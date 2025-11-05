@@ -67,11 +67,12 @@ DELETE   /students/{id}  delete student
 
 🗄 Database Schema
 
-Field   Type
-id      Long
-name    String
-email   String
-age     integer
+Field |  Type
+--------------
+id    |  Long
+name  |  String
+email |  String
+age   |  integer
 
 ⚠️ Notes
 application.properties is ignored to protect credentials
