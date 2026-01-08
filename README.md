@@ -159,7 +159,7 @@ http://localhost:8080/index.html
 ```java
   @CrossOrigin(origins = "*")
   @RestController
-  public class En21Controller { ... }
+  public class En21Controller {}
 ```
 - **MySQL**: Ensure MySQL server is running before starting the application
 - **Credentials**: `application.properties` is gitignored for security

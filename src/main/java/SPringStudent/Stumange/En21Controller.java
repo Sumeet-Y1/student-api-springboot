@@ -7,21 +7,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/students")
+@CrossOrigin(origins = "*")
 public class En21Controller {
 
     @Autowired
     private En21Service en21Service;
 
-    // POST: Create student
+    // POST: Create student (now requires userId)
     @PostMapping
-    public En21 createStudent(@RequestBody En21 student) {
+    public En21 createStudent(@RequestBody En21 student, @RequestParam Long userId) {
+        student.setUserId(userId);
         return en21Service.saveStudent(student);
     }
 
-    // GET: All students
+    // GET: Get students by userId
     @GetMapping
-    public List<En21> getAllStudents() {
-        return en21Service.getAllStudents();
+    public List<En21> getStudentsByUser(@RequestParam Long userId) {
+        return en21Service.getStudentsByUserId(userId);
     }
 
     // GET: Single student by ID

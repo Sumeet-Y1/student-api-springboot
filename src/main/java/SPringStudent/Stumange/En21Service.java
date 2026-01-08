@@ -14,6 +14,11 @@ public class En21Service {
         return en21Repository.save(student);
     }
 
+    // Get all students for a specific user
+    public List<En21> getStudentsByUserId(Long userId) {
+        return en21Repository.findByUserId(userId);
+    }
+
     public List<En21> getAllStudents() {
         return en21Repository.findAll();
     }
