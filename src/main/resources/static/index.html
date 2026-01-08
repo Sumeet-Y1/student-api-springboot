@@ -960,348 +960,348 @@
 </div>
 
 <script>
-    const API_URL = 'http://localhost:8080';
-    let allStudents = [];
-    let currentUserId = null;
+    const API_URL = 'https://student-api-springboot.onrender.com';
+      let allStudents = [];
+      let currentUserId = null;
 
-    // Check if user is logged in on page load
-    window.onload = function() {
-        checkAuth();
-    };
+      // Check if user is logged in on page load
+      window.onload = function() {
+          checkAuth();
+      };
 
-    function checkAuth() {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        const userId = localStorage.getItem('userId');
-        const username = localStorage.getItem('username');
+      function checkAuth() {
+          const isLoggedIn = localStorage.getItem('isLoggedIn');
+          const userId = localStorage.getItem('userId');
+          const username = localStorage.getItem('username');
 
-        if (isLoggedIn === 'true' && userId) {
-            currentUserId = userId;
-            document.getElementById('authPage').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('currentUsername').textContent = username;
-            loadStudents();
-        } else {
-            document.getElementById('authPage').style.display = 'flex';
-            document.getElementById('mainApp').style.display = 'none';
-        }
-    }
+          if (isLoggedIn === 'true' && userId) {
+              currentUserId = userId;
+              document.getElementById('authPage').style.display = 'none';
+              document.getElementById('mainApp').style.display = 'block';
+              document.getElementById('currentUsername').textContent = username;
+              loadStudents();
+          } else {
+              document.getElementById('authPage').style.display = 'flex';
+              document.getElementById('mainApp').style.display = 'none';
+          }
+      }
 
-    // Switch between login and signup
-    function showSignup() {
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('signupForm').style.display = 'block';
-    }
+      // Switch between login and signup
+      function showSignup() {
+          document.getElementById('loginForm').style.display = 'none';
+          document.getElementById('signupForm').style.display = 'block';
+      }
 
-    function showLogin() {
-        document.getElementById('signupForm').style.display = 'none';
-        document.getElementById('loginForm').style.display = 'block';
-    }
+      function showLogin() {
+          document.getElementById('signupForm').style.display = 'none';
+          document.getElementById('loginForm').style.display = 'block';
+      }
 
-    // Handle Login
-    async function handleLogin(e) {
-        e.preventDefault();
-        const username = document.getElementById('loginUsername').value;
-        const password = document.getElementById('loginPassword').value;
-        const errorMsg = document.getElementById('loginError');
+      // Handle Login
+      async function handleLogin(e) {
+          e.preventDefault();
+          const username = document.getElementById('loginUsername').value;
+          const password = document.getElementById('loginPassword').value;
+          const errorMsg = document.getElementById('loginError');
 
-        try {
-            const response = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
+          try {
+              const response = await fetch(`${API_URL}/auth/login`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ username, password })
+              });
 
-            const data = await response.json();
+              const data = await response.json();
 
-            if (data.success) {
-                localStorage.setItem('userId', data.userId);
-                localStorage.setItem('username', data.username);
-                localStorage.setItem('isLoggedIn', 'true');
-                checkAuth();
-            } else {errorMsg.textContent = data.message;
-errorMsg.style.display = 'block';
-}
-} catch (error) {
-errorMsg.textContent = 'Connection error. Make sure the server is running.';
-errorMsg.style.display = 'block';
-}
-}
-    // Handle Signup
-    async function handleSignup(e) {
-        e.preventDefault();
-        const username = document.getElementById('signupUsername').value;
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-        const errorMsg = document.getElementById('signupError');
-        const successMsg = document.getElementById('signupSuccess');
+              if (data.success) {
+                  localStorage.setItem('userId', data.userId);
+                  localStorage.setItem('username', data.username);
+                  localStorage.setItem('isLoggedIn', 'true');
+                  checkAuth();
+              } else {errorMsg.textContent = data.message;
+  errorMsg.style.display = 'block';
+  }
+  } catch (error) {
+  errorMsg.textContent = 'Connection error. Make sure the server is running.';
+  errorMsg.style.display = 'block';
+  }
+  }
+      // Handle Signup
+      async function handleSignup(e) {
+          e.preventDefault();
+          const username = document.getElementById('signupUsername').value;
+          const email = document.getElementById('signupEmail').value;
+          const password = document.getElementById('signupPassword').value;
+          const errorMsg = document.getElementById('signupError');
+          const successMsg = document.getElementById('signupSuccess');
 
-        errorMsg.style.display = 'none';
-        successMsg.style.display = 'none';
+          errorMsg.style.display = 'none';
+          successMsg.style.display = 'none';
 
-        try {
-            const response = await fetch(`${API_URL}/auth/signup`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password })
-            });
+          try {
+              const response = await fetch(`${API_URL}/auth/signup`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ username, email, password })
+              });
 
-            const data = await response.json();
+              const data = await response.json();
 
-            if (data.success) {
-                successMsg.textContent = 'Account created successfully! Please login.';
-                successMsg.style.display = 'block';
-                document.getElementById('signupForm').reset();
-                setTimeout(() => {
-                    showLogin();
-                    successMsg.style.display = 'none';
-                }, 2000);
-            } else {
-                errorMsg.textContent = data.message;
-                errorMsg.style.display = 'block';
-            }
-        } catch (error) {
-            errorMsg.textContent = 'Connection error. Make sure the server is running.';
-            errorMsg.style.display = 'block';
-        }
-    }
+              if (data.success) {
+                  successMsg.textContent = 'Account created successfully! Please login.';
+                  successMsg.style.display = 'block';
+                  document.getElementById('signupForm').reset();
+                  setTimeout(() => {
+                      showLogin();
+                      successMsg.style.display = 'none';
+                  }, 2000);
+              } else {
+                  errorMsg.textContent = data.message;
+                  errorMsg.style.display = 'block';
+              }
+          } catch (error) {
+              errorMsg.textContent = 'Connection error. Make sure the server is running.';
+              errorMsg.style.display = 'block';
+          }
+      }
 
-    // Handle Logout
-    function handleLogout() {
-        if (confirm('Are you sure you want to logout?')) {
-            localStorage.removeItem('userId');
-            localStorage.removeItem('username');
-            localStorage.removeItem('isLoggedIn');
-            checkAuth();
-        }
-    }
+      // Handle Logout
+      function handleLogout() {
+          if (confirm('Are you sure you want to logout?')) {
+              localStorage.removeItem('userId');
+              localStorage.removeItem('username');
+              localStorage.removeItem('isLoggedIn');
+              checkAuth();
+          }
+      }
 
-    // Theme Toggle
-    function toggleTheme() {
-        const body = document.body;
-        const theme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        body.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-        updateParticleColor(theme);
-    }
+      // Theme Toggle
+      function toggleTheme() {
+          const body = document.body;
+          const theme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+          body.setAttribute('data-theme', theme);
+          localStorage.setItem('theme', theme);
+          updateParticleColor(theme);
+      }
 
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.body.setAttribute('data-theme', savedTheme);
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.body.setAttribute('data-theme', savedTheme);
 
-    // Three.js Particles
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({
-        canvas: document.getElementById('bg-canvas'),
-        alpha: true
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.position.z = 50;
+      // Three.js Particles
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({
+          canvas: document.getElementById('bg-canvas'),
+          alpha: true
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.position.z = 50;
 
-    const particleCount = window.innerWidth < 768 ? 40 : 80;
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
+      const particleCount = window.innerWidth < 768 ? 40 : 80;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
 
-    for (let i = 0; i < particleCount * 3; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 120;
-        positions[i + 1] = (Math.random() - 0.5) * 120;
-        positions[i + 2] = (Math.random() - 0.5) * 80;
-    }
+      for (let i = 0; i < particleCount * 3; i += 3) {
+          positions[i] = (Math.random() - 0.5) * 120;
+          positions[i + 1] = (Math.random() - 0.5) * 120;
+          positions[i + 2] = (Math.random() - 0.5) * 80;
+      }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-    const material = new THREE.PointsMaterial({
-        color: savedTheme === 'light' ? 0x0D0D0D : 0xFFFFFF,
-        size: 1.5,
-        transparent: true,
-        opacity: 0.6
-    });
+      const material = new THREE.PointsMaterial({
+          color: savedTheme === 'light' ? 0x0D0D0D : 0xFFFFFF,
+          size: 1.5,
+          transparent: true,
+          opacity: 0.6
+      });
 
-    const points = new THREE.Points(geometry, material);
-    scene.add(points);
+      const points = new THREE.Points(geometry, material);
+      scene.add(points);
 
-    function animate() {
-        requestAnimationFrame(animate);
-        points.rotation.y += 0.0003;
-        points.rotation.x += 0.0001;
-        renderer.render(scene, camera);
-    }
-    animate();
+      function animate() {
+          requestAnimationFrame(animate);
+          points.rotation.y += 0.0003;
+          points.rotation.x += 0.0001;
+          renderer.render(scene, camera);
+      }
+      animate();
 
-    function updateParticleColor(theme) {
-        material.color.setHex(theme === 'light' ? 0x0D0D0D : 0xFFFFFF);
-    }
+      function updateParticleColor(theme) {
+          material.color.setHex(theme === 'light' ? 0x0D0D0D : 0xFFFFFF);
+      }
 
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+      window.addEventListener('resize', () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+      });
 
-    // Student Management Functions
-    async function handleAddStudent(e) {
-        e.preventDefault();
-        const student = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            age: parseInt(document.getElementById('age').value)
-        };
+      // Student Management Functions
+      async function handleAddStudent(e) {
+          e.preventDefault();
+          const student = {
+              name: document.getElementById('name').value,
+              email: document.getElementById('email').value,
+              age: parseInt(document.getElementById('age').value)
+          };
 
-        const emailExists = allStudents.some(s => s.email.toLowerCase() === student.email.toLowerCase());
-        if (emailExists) {
-            alert('⚠️ A student with this email already exists!');
-            return;
-        }
+          const emailExists = allStudents.some(s => s.email.toLowerCase() === student.email.toLowerCase());
+          if (emailExists) {
+              alert('⚠️ A student with this email already exists!');
+              return;
+          }
 
-        try {
-            const res = await fetch(`${API_URL}/students?userId=${currentUserId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(student)
-            });
-            if (res.ok) {
-                document.getElementById('studentForm').reset();
-                loadStudents();
-                alert('✅ Student added successfully!');
-            }
-        } catch (err) {
-            alert('❌ Error adding student');
-        }
-    }
+          try {
+              const res = await fetch(`${API_URL}/students?userId=${currentUserId}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(student)
+              });
+              if (res.ok) {
+                  document.getElementById('studentForm').reset();
+                  loadStudents();
+                  alert('✅ Student added successfully!');
+              }
+          } catch (err) {
+              alert('❌ Error adding student');
+          }
+      }
 
-    async function loadStudents() {
-        try {
-            const res = await fetch(`${API_URL}/students?userId=${currentUserId}`);
-            const students = await res.json();
-            allStudents = students;
-            displayStudents(students);
-            updateStats(students);
-        } catch (err) {
-            document.getElementById('studentsList').innerHTML = '<div class="empty-message">Error loading students</div>';
-        }
-    }
+      async function loadStudents() {
+          try {
+              const res = await fetch(`${API_URL}/students?userId=${currentUserId}`);
+              const students = await res.json();
+              allStudents = students;
+              displayStudents(students);
+              updateStats(students);
+          } catch (err) {
+              document.getElementById('studentsList').innerHTML = '<div class="empty-message">Error loading students</div>';
+          }
+      }
 
-    function updateStats(students) {
-        document.getElementById('totalStudents').textContent = students.length;
-        const avg = students.length > 0 ? Math.round(students.reduce((s, st) => s + st.age, 0) / students.length) : 0;
-        document.getElementById('avgAge').textContent = avg;
-    }
+      function updateStats(students) {
+          document.getElementById('totalStudents').textContent = students.length;
+          const avg = students.length > 0 ? Math.round(students.reduce((s, st) => s + st.age, 0) / students.length) : 0;
+          document.getElementById('avgAge').textContent = avg;
+      }
 
-    function searchStudents() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = allStudents.filter(student =>
-            student.name.toLowerCase().includes(searchTerm) ||
-            student.email.toLowerCase().includes(searchTerm) ||
-            student.id.toString().includes(searchTerm)
-        );
-        displayStudents(filtered);
-    }
+      function searchStudents() {
+          const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+          const filtered = allStudents.filter(student =>
+              student.name.toLowerCase().includes(searchTerm) ||
+              student.email.toLowerCase().includes(searchTerm) ||
+              student.id.toString().includes(searchTerm)
+          );
+          displayStudents(filtered);
+      }
 
-    function displayStudents(students) {
-        const container = document.getElementById('studentsList');
-        if (students.length === 0) {
-            container.innerHTML = '<div class="empty-message">No students found. Add your first student above.</div>';
-            return;
-        }
+      function displayStudents(students) {
+          const container = document.getElementById('studentsList');
+          if (students.length === 0) {
+              container.innerHTML = '<div class="empty-message">No students found. Add your first student above.</div>';
+              return;
+          }
 
-        let html = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Age</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
+          let html = `
+              <table>
+                  <thead>
+                      <tr>
+                          <th>ID</th>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Age</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+          `;
 
-        students.forEach(s => {
-            html += `
-                <tr>
-                    <td><strong>#${s.id}</strong></td>
-                    <td>${s.name}</td>
-                    <td>${s.email}</td>
-                    <td>${s.age} years</td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="btn btn-outline" onclick="editStudent(${s.id})">Edit</button>
-                            <button class="btn btn-danger" onclick="deleteStudent(${s.id})">Delete</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        });
+          students.forEach(s => {
+              html += `
+                  <tr>
+                      <td><strong>#${s.id}</strong></td>
+                      <td>${s.name}</td>
+                      <td>${s.email}</td>
+                      <td>${s.age} years</td>
+                      <td>
+                          <div class="table-actions">
+                              <button class="btn btn-outline" onclick="editStudent(${s.id})">Edit</button>
+                              <button class="btn btn-danger" onclick="deleteStudent(${s.id})">Delete</button>
+                          </div>
+                      </td>
+                  </tr>
+              `;
+          });
 
-        html += '</tbody></table>';
-        container.innerHTML = html;
-    }
+          html += '</tbody></table>';
+          container.innerHTML = html;
+      }
 
-    async function editStudent(id) {
-        try {
-            const res = await fetch(`${API_URL}/students/${id}`);
-            const s = await res.json();
+      async function editStudent(id) {
+          try {
+              const res = await fetch(`${API_URL}/students/${id}`);
+              const s = await res.json();
 
-            document.getElementById('updateId').value = s.id;
-            document.getElementById('updateName').value = s.name;
-            document.getElementById('updateEmail').value = s.email;
-            document.getElementById('updateAge').value = s.age;
+              document.getElementById('updateId').value = s.id;
+              document.getElementById('updateName').value = s.name;
+              document.getElementById('updateEmail').value = s.email;
+              document.getElementById('updateAge').value = s.age;
 
-            document.getElementById('updateSection').style.display = 'block';
-            document.getElementById('updateSection').scrollIntoView({ behavior: 'smooth' });
-        } catch (err) {
-            console.error(err);
-        }
-    }
+              document.getElementById('updateSection').style.display = 'block';
+              document.getElementById('updateSection').scrollIntoView({ behavior: 'smooth' });
+          } catch (err) {
+              console.error(err);
+          }
+      }
 
-    async function handleUpdateStudent(e) {
-        e.preventDefault();
-        const id = document.getElementById('updateId').value;
-        const student = {
-            name: document.getElementById('updateName').value,
-            email: document.getElementById('updateEmail').value,
-            age: parseInt(document.getElementById('updateAge').value)
-        };
+      async function handleUpdateStudent(e) {
+          e.preventDefault();
+          const id = document.getElementById('updateId').value;
+          const student = {
+              name: document.getElementById('updateName').value,
+              email: document.getElementById('updateEmail').value,
+              age: parseInt(document.getElementById('updateAge').value)
+          };
 
-        const emailExists = allStudents.some(s =>
-            s.email.toLowerCase() === student.email.toLowerCase() &&
-            s.id.toString() !== id
-        );
-        if (emailExists) {
-            alert('⚠️ Another student with this email already exists!');
-            return;
-        }
+          const emailExists = allStudents.some(s =>
+              s.email.toLowerCase() === student.email.toLowerCase() &&
+              s.id.toString() !== id
+          );
+          if (emailExists) {
+              alert('⚠️ Another student with this email already exists!');
+              return;
+          }
 
-        try {
-            await fetch(`${API_URL}/students/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(student)
-            });
-            cancelUpdate();
-            loadStudents();
-            alert('✅ Student updated successfully!');
-        } catch (err) {
-            alert('❌ Error updating student');
-        }
-    }
+          try {
+              await fetch(`${API_URL}/students/${id}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(student)
+              });
+              cancelUpdate();
+              loadStudents();
+              alert('✅ Student updated successfully!');
+          } catch (err) {
+              alert('❌ Error updating student');
+          }
+      }
 
-    function cancelUpdate() {
-        document.getElementById('updateSection').style.display = 'none';
-        document.getElementById('updateForm').reset();
-    }
+      function cancelUpdate() {
+          document.getElementById('updateSection').style.display = 'none';
+          document.getElementById('updateForm').reset();
+      }
 
-    async function deleteStudent(id) {
-        if (confirm('Are you sure you want to delete this student?')) {
-            try {
-                await fetch(`${API_URL}/students/${id}`, { method: 'DELETE' });
-                loadStudents();
-            } catch (err) {
-                alert('❌ Error deleting student');
-            }
-        }
-    }
+      async function deleteStudent(id) {
+          if (confirm('Are you sure you want to delete this student?')) {
+              try {
+                  await fetch(`${API_URL}/students/${id}`, { method: 'DELETE' });
+                  loadStudents();
+              } catch (err) {
+                  alert('❌ Error deleting student');
+              }
+          }
+      }
 </script>
 </body>
 </html>
