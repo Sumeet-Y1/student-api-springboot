@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edapt - Student Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0D0D0D;
+            --bg-secondary: #1A1A1A;
+            --bg-card: #262626;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8F8F8F;
+            --accent: #FFFFFF;
+            --border: #333333;
+            --hover: #2D2D2D;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --text-primary: #0D0D0D;
+            --text-secondary: #737373;
+            --accent: #0D0D0D;
+            --border: #E5E5E5;
+            --hover: #F5F5F5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .theme-switch {
+            width: 50px;
+            height: 26px;
+            background: var(--hover);
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+
+        .theme-switch-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        [data-theme="light"] .theme-switch-slider {
+            transform: translateX(24px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 40px 80px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 4.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        /* Stats Dashboard */
+        .stats-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 3.5em;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        /* Content Sections */
+        .content-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-header {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+        }
+
+        /* Form Styling */
+        .form-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 40px;
+        }
+
+        .form-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-field {
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--hover);
+        }
+
+        .btn {
+            padding: 16px 40px;
+            background: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--hover);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: #EF4444;
+            border: 1px solid #EF4444;
+        }
+
+        .btn-danger:hover {
+            background: #EF4444;
+            color: white;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Table Styling */
+        .table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.05em;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--hover);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            padding: 20px 30px;
+            text-align: left;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        td {
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--hover);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table-actions .btn {
+            padding: 10px 20px;
+            font-size: 0.85em;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px 40px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-brand h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .footer-brand p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 300px;
+        }
+
+        .footer-section h3 {
+            font-size: 1em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        #updateSection {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 15px 20px;
+            }
+
+            .nav-menu {
+                gap: 20px;
+            }
+
+            .nav-link {
+                display: none;
+            }
+
+            .hero {
+                padding: 100px 20px 60px;
+            }
+
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .stats-section,
+            .content-section {
+                padding: 40px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .form-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2em;
+            }
+
+            th, td {
+                padding: 15px;
+                font-size: 0.9em;
+            }
+
+            .table-actions {
+                flex-direction: column;
+            }
+
+            .table-actions .btn {
+                width: 100%;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<!-- Navigation -->
+<nav>
+    <div class="nav-container">
+        <div class="nav-logo">Edapt</div>
+        <div class="nav-menu">
+            <a href="#dashboard" class="nav-link">Dashboard</a>
+            <a href="#students" class="nav-link">Students</a>
+            <a href="#add" class="nav-link">Add New</a>
+            <div class="theme-switch" onclick="toggleTheme()">
+                <div class="theme-switch-slider"></div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <h1>Student Management<br>Reimagined</h1>
+    <p>Powerful, intuitive, and built for modern educational institutions</p>
+</section>
+
+<!-- Stats Dashboard -->
+<section class="stats-section" id="dashboard">
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-label">Total Students</div>
+            <div class="stat-value" id="totalStudents">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Average Age</div>
+            <div class="stat-value" id="avgAge">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">This Month</div>
+            <div class="stat-value">+12</div>
+        </div>
+    </div>
+</section>
+
+<!-- Add Student Section -->
+<section class="content-section" id="add">
+    <div class="section-header">
+        <h2 class="section-title">Add Student</h2>
+        <p class="section-subtitle">Register a new student in the system</p>
+    </div>
+
+    <div class="form-container">
+        <form id="studentForm">
+            <div class="form-layout">
+                <div class="input-group">
+                    <label class="input-label">Full Name</label>
+                    <input type="text" id="name" class="input-field" placeholder="John Doe" required>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Email Address</label>
+                    <input type="email" id="email" class="input-field" placeholder="john@example.com" required>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Age</label>
+                    <input type="number" id="age" class="input-field" placeholder="20" required>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn">Add Student</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Update Student Section -->
+<section class="content-section" id="updateSection">
+    <div class="section-header">
+        <h2 class="section-title">Update Student</h2>
+        <p class="section-subtitle">Modify student information</p>
+    </div>
+
+    <div class="form-container">
+        <form id="updateForm">
+            <input type="hidden" id="updateId">
+            <div class="form-layout">
+                <div class="input-group">
+                    <label class="input-label">Full Name</label>
+                    <input type="text" id="updateName" class="input-field" required>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Email Address</label>
+                    <input type="email" id="updateEmail" class="input-field" required>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Age</label>
+                    <input type="number" id="updateAge" class="input-field" required>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn">Update Student</button>
+                <button type="button" class="btn btn-outline" onclick="cancelUpdate()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Students List Section -->
+<section class="content-section" id="students">
+    <div class="section-header">
+        <h2 class="section-title">All Students</h2>
+        <p class="section-subtitle">Complete student directory</p>
+    </div>
+
+    <div class="search-container">
+        <input
+                type="text"
+                id="searchInput"
+                class="search-input"
+                placeholder="Search by name, email, or ID..."
+                onkeyup="searchStudents()"
+        >
+    </div>
+
+    <div class="table-wrapper">
+        <div class="table-container">
+            <div id="studentsList">Loading students...</div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-brand">
+            <h2>Edapt</h2>
+            <p>Revolutionizing student management with cutting-edge technology and intuitive design.</p>
+        </div>
+        <div class="footer-section">
+            <h3>Product</h3>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Features</a>
+                <a href="#" class="footer-link">Pricing</a>
+                <a href="#" class="footer-link">API</a>
+                <a href="#" class="footer-link">Documentation</a>
+            </div>
+        </div>
+        <div class="footer-section">
+            <h3>Company</h3>
+            <div class="footer-links">
+                <a href="#" class="footer-link">About</a>
+                <a href="#" class="footer-link">Blog</a>
+                <a href="#" class="footer-link">Careers</a>
+                <a href="#" class="footer-link">Contact</a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        © 2025 Edapt. All rights reserved. Designed with precision and care.
+    </div>
+</footer>
+
+<script>
+    const API_URL = 'http://localhost:8080/students';
+
+    // Theme Toggle
+    function toggleTheme() {
+        const body = document.body;
+        const theme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        updateParticleColor(theme);
+    }
+
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.body.setAttribute('data-theme', savedTheme);
+
+    // Three.js Particles
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById('bg-canvas'),
+        alpha: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.position.z = 50;
+
+    const particleCount = window.innerWidth < 768 ? 40 : 80;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 120;
+        positions[i + 1] = (Math.random() - 0.5) * 120;
+        positions[i + 2] = (Math.random() - 0.5) * 80;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const material = new THREE.PointsMaterial({
+        color: savedTheme === 'light' ? 0x0D0D0D : 0xFFFFFF,
+        size: 1.5,
+        transparent: true,
+        opacity: 0.6
+    });
+
+    const points = new THREE.Points(geometry, material);
+    scene.add(points);
+
+    function animate() {
+        requestAnimationFrame(animate);
+        points.rotation.y += 0.0003;
+        points.rotation.x += 0.0001;
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    function updateParticleColor(theme) {
+        material.color.setHex(theme === 'light' ? 0x0D0D0D : 0xFFFFFF);
+    }
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // API Functions
+    let allStudents = [];
+    loadStudents();
+
+    function searchStudents() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = allStudents.filter(student =>
+            student.name.toLowerCase().includes(searchTerm) ||
+            student.email.toLowerCase().includes(searchTerm) ||
+            student.id.toString().includes(searchTerm)
+        );
+        displayStudents(filtered);
+    }
+
+    document.getElementById('studentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const student = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            age: parseInt(document.getElementById('age').value)
+        };
+
+        // Check if email already exists
+        const emailExists = allStudents.some(s => s.email.toLowerCase() === student.email.toLowerCase());
+        if (emailExists) {
+            alert('⚠️ A student with this email already exists! Please use a different email.');
+            return;
+        }
+
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(student)
+            });
+            if (res.ok) {
+                document.getElementById('studentForm').reset();
+                loadStudents();
+                alert('✅ Student added successfully!');
+            }
+        } catch (err) {
+            alert('❌ Error connecting to server. Make sure backend is running.');
+        }
+    });
+
+    async function loadStudents() {
+        try {
+            const res = await fetch(API_URL);
+            const students = await res.json();
+            allStudents = students;
+            displayStudents(students);
+            updateStats(students);
+        } catch (err) {
+            document.getElementById('studentsList').innerHTML = '<div class="empty-message">Cannot connect to backend. Start your Spring Boot server on port 8080.</div>';
+        }
+    }
+
+    function updateStats(students) {
+        document.getElementById('totalStudents').textContent = students.length;
+        const avg = students.length > 0 ? Math.round(students.reduce((s, st) => s + st.age, 0) / students.length) : 0;
+        document.getElementById('avgAge').textContent = avg;
+    }
+
+    function displayStudents(students) {
+        const container = document.getElementById('studentsList');
+        if (students.length === 0) {
+            container.innerHTML = '<div class="empty-message">No students found. Add your first student above.</div>';
+            return;
+        }
+
+        let html = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Age</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        students.forEach(s => {
+            html += `
+                <tr>
+                    <td><strong>#${s.id}</strong></td>
+                    <td>${s.name}</td>
+                    <td>${s.email}</td>
+                    <td>${s.age} years</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-outline" onclick="editStudent(${s.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteStudent(${s.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    async function editStudent(id) {
+        try {
+            const res = await fetch(`${API_URL}/${id}`);
+            const s = await res.json();
+
+            document.getElementById('updateId').value = s.id;
+            document.getElementById('updateName').value = s.name;
+            document.getElementById('updateEmail').value = s.email;
+            document.getElementById('updateAge').value = s.age;
+
+            document.getElementById('updateSection').style.display = 'block';
+            document.getElementById('updateSection').scrollIntoView({ behavior: 'smooth' });
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    document.getElementById('updateForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('updateId').value;
+        const student = {
+            name: document.getElementById('updateName').value,
+            email: document.getElementById('updateEmail').value,
+            age: parseInt(document.getElementById('updateAge').value)
+        };
+
+        // Check if email already exists (excluding current student)
+        const emailExists = allStudents.some(s =>
+            s.email.toLowerCase() === student.email.toLowerCase() &&
+            s.id.toString() !== id
+        );
+        if (emailExists) {
+            alert('⚠️ Another student with this email already exists! Please use a different email.');
+            return;
+        }
+
+        try {
+            await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(student)
+            });
+            cancelUpdate();
+            loadStudents();
+            alert('✅ Student updated successfully!');
+        } catch (err) {
+            console.error(err);
+            alert('❌ Error updating student.');
+        }
+    });
+
+    function cancelUpdate() {
+        document.getElementById('updateSection').style.display = 'none';
+        document.getElementById('updateForm').reset();
+    }
+
+    async function deleteStudent(id) {
+        if (confirm('Are you sure you want to delete this student?')) {
+            try {
+                await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                loadStudents();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+</script>
+</body>
+</html>
