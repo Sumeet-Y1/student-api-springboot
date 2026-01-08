@@ -152,16 +152,6 @@ http://localhost:8080/index.html
 
 ---
 
-## 📸 Screenshots
-
-### Dark Mode
-![Dark Mode Dashboard](#)
-
-### Light Mode
-![Light Mode Dashboard](#)
-
----
-
 ## ⚠️ Important Notes
 
 - **Email Validation**: Frontend prevents duplicate emails before submission
