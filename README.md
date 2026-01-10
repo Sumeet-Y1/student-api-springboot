@@ -185,11 +185,6 @@ Currently mastering: Spring Boot, DSA, Full-Stack Development
 
 ---
 
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
 
 ## 🙏 Acknowledgments
 
